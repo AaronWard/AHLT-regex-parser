@@ -1,0 +1,12 @@
+the DT singular
+a DT singular
+man N singular 
+men N  plural
+woman N singular
+women N  plural
+bites V singular
+bite V plural
+like V plural
+likes V singular
+green ADJ singular
+dog N singular
