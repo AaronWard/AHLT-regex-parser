@@ -5,7 +5,13 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
+ * This program takes input from a user, the input is parsed and 
+ * compares to the sentence "The/a man/men/woman/women bite(s)/like(s) the green dog"
+ * using regular expressions
  * 
+ * The Stanford CoreNLP library is used to for tagging the users input with POS tags.
+ * A bracketed phrasal structure of the users input is displayed to the screen aswell as 
+ * a result wether or not was the users input an acceptable regular expression.
  * @author aaron
  *
  */
@@ -25,10 +31,9 @@ public class Parser extends JFrame {
 	}
 	
 	/**
-	 * Constructer to initialiswe GUI components
+	 * Constructer to initialise GUI components
 	 */
 	public Parser(){
-		// TODO Auto-generated method stub
 		super.setTitle("Parser");
 		add(getMainPanel());
 		setSizes();
@@ -36,13 +41,17 @@ public class Parser extends JFrame {
 	
 	
 	private void setSizes() {
-		setSize(800, 600);
+		setSize(800, 300);
         setVisible(true);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
+	/**
+	 * Main JPanel
+	 * @return
+	 */
 	public JPanel getMainPanel(){
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(getNorthPanel(), BorderLayout.NORTH);
@@ -50,6 +59,10 @@ public class Parser extends JFrame {
 		return mainPanel;
 	}
 	
+	/**
+	 * Panel for text input, parse button and bracketed output
+	 * @return
+	 */
 	public JPanel getNorthPanel(){
 	
 		JPanel northPanel = new JPanel();
@@ -68,7 +81,6 @@ public class Parser extends JFrame {
 		JButton parse = new JButton("Parse text");
 		parse.addActionListener(new ParseButtonListener());
 		
-		
 		northPanel.add(input);
 		northPanel.add(parse);
 		northPanel.add(output);
@@ -85,15 +97,8 @@ public class Parser extends JFrame {
 		acceptable = new JLabel("<html><b>Result - </b> Acceptable Regular Expression:</html>" + true);
 		acceptable.setFont(new Font("Century Gothic", Font.ITALIC , 16 ));
 		acceptable.setPreferredSize(new Dimension(300, 40));
-		
-		
-		JButton test = new JButton("Test Tagged");
-		test.addActionListener(new TestButtonListener());
-		
+
 		southPanel.add(acceptable);
-		southPanel.add(test);
-		
-		
 		return southPanel;
 	}
 }

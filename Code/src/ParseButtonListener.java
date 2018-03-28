@@ -1,31 +1,27 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.StringTokenizer;
+
 import javax.swing.JOptionPane;
 
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
-import java.util.regex.*;
-
 /**
- * Used for interacting with  the GUI when text is entered
+ * This class is is a button listener for when the user has entered an input
+ * and clicks the parse button on the UI.
  * @author aaron
  *
  */
 public class ParseButtonListener implements ActionListener {
-	/**
-	 * All the back end logic for interacting with  the lexicon
-	 */
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent arg0) {
+
 		String input = Parser.input.getText();
-		String output = " S [NP [ ";		
+		
 		/**
-		 * make sure the user enters an input
+		 * Guard to make sure the user has entered 
+		 * an input to be parsed
 		 */
 		if(input.equals("")){
 			JOptionPane.showMessageDialog(null, ""
@@ -33,64 +29,20 @@ public class ParseButtonListener implements ActionListener {
 					"Oops", JOptionPane.PLAIN_MESSAGE);
 		}
 		else{
-				/********************************/
+			//Guard incase the user uses capital letters
+			input = input.toLowerCase();
 			
-			Scanner fileReaderScan = null;
 			StringTokenizer tokens = new StringTokenizer(input);
-			ArrayList<String> categoryList = new ArrayList<String>();
-
-			/**
-			 * traverse each token from the input
-			 */
-			while(tokens.hasMoreTokens()){
-				fileReaderScan = new Scanner(getClass().getResourceAsStream("lexicon.txt"));
-
-				String thisToken = tokens.nextToken();
-				
-				/**
-				 * Traverse lines in the lexicon.txt
-				 */
-				while(fileReaderScan.hasNextLine())
-				{	
-						//Tokenize the words of each line in the lexicon.txt
-						String scan = fileReaderScan.nextLine().toString();
-						StringTokenizer lexiconTokens = new StringTokenizer(scan);
-
-						/**
-						 * traverse the tokens and add them to the list of POS categories
-						 */
-						while(lexiconTokens.hasMoreTokens()){
-							if(thisToken.equals(lexiconTokens.nextToken())){
-								
-								String thisLexToken = lexiconTokens.nextToken();
-								categoryList.add(thisLexToken);
-								output += " [" + thisLexToken + " " + thisToken + " ]";
-							}	
-						}
-				}
-			}
-			fileReaderScan.close();
+			ValidateInput validateInput = new ValidateInput();
+			validateInput.validate(tokens);
 			
-			
-			String posTags = "";
-			for(int i = 0; i < categoryList.size(); i++){
-				posTags += categoryList.get(i) + " ";
-			}
-			
-			System.out.println(posTags);
-			/********************************/
-			
-
-			if(posTags.equals("DT N V DT ADJ N ")){
-				Parser.acceptable.setText("<html>Result - Acceptable Regular Expression: <b>True</b></html>" );
-				
-				Parser.output.setText(output + "]");
-				
-			}else{
-				Parser.acceptable.setText("<html>Result - Acceptable Regular Expression: <b>False</b></html>" );
-					
-				Parser.output.setText(output + "]");
-			}
-		}	
+			//Tag the users input using the stanford library
+			MaxentTagger tagger = new MaxentTagger("src/english-left3words-distsim.tagger");			
+			String tagged = tagger.tagString(input);
+							
+			//calls the print method to print the bracketed structure to the UI
+			PrintBracket printBracket = new PrintBracket();
+			printBracket.print(tagged);
+		}		
 	}
 }
